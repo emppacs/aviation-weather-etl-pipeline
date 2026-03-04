@@ -33,6 +33,8 @@ You are asked to develop a pipeline that will extract data from a public climate
 
 The endpoint you will extract from is the Geomet hourly climate API endpoint: `https://api.weather.gc.ca/collections/climate-hourly/items`
 
+The Swagger documentation for the entire Geomet API is available <a href="https://api.weather.gc.ca/openapi?f=html" target="_blank">here</a>.
+
 Here are the detailed requirements of your pipeline:
 
 * Extract hourly climate data for the latest available full date and where the CLIMATE_IDENTIFIER is `8202251`
