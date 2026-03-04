@@ -3,7 +3,7 @@
 ## Scenario
 You are tasked with designing a production-ready data pipeline that extracts data from a public API endpoint, applies necessary transformations, and loads the results into a database table. The solution should be suitable for deployment in an operational environment.
 
-This assessment is conducted through GitHub. You are expected to fork the repository, implement your solution in your fork, and submit via a pull request.
+This assessment is conducted through GitHub. Your submission will be through your own private Github repository (see How to Submit below).
 
 
 ### Production Principles
@@ -117,15 +117,20 @@ Evaluation will focus on how easily the solution can be executed in a clean envi
 
 
 ## How to Submit
-This assessment is to be completed using GitHub as the primary collaboration and submission mechanism. Candidates are expected to fork this repository to your own GitHub account and implement your solution within that fork.
+This assessment is to be completed using GitHub as the primary collaboration and submission mechanism. You must create your own **private** repository containing your solution and the copied `yhz_db.sqlite` file from this repository. 
 
-Access to the forked repository must be granted to the following GitHub users:
+We suggest one of two methods:
+
+1. Simply download and copy the `yhz_db.sqlite` file from this repo into your own repository and work from there
+2. Import the current repository into your own private repository (see <a href="https://github.com/new/import" target="_blank">here</a>.)
+
+**DO NOT FORK this repository! Forked repositories cannot be made private, meaning your solution will be publicly viewable**
+
+Access to your repository must be granted to the following GitHub users:
 
 - Will Hipson (`whipson`)
 - Ryan Garnett (`ryangarnett`)
 
-Upon completion, the assessment must be submitted as a pull request from the candidate’s fork, directed to ryangarnett for review.
-
-Any questions related to the assessment should be raised as a GitHub Issue within the forked repository. Please tag both ryangarnett and whipson to ensure visibility and response.
+Any questions related to the assessment should be raised as a GitHub Issue within your repository. Please tag both ryangarnett and whipson to ensure visibility and response.
 
 ***The use of Generative AI is acceptable for this assignment***
