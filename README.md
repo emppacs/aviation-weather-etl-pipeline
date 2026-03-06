@@ -11,7 +11,6 @@ Our philiosophy of "production" is that systems are expected to operate reliably
 
 * automation
 * reproducibility and portability
-* lightweight (minimal dependencies)
 * scalable
 * documented
 
@@ -103,9 +102,9 @@ When reviewing the pipeline code, evaluation will focus on the following:
 Evaluation will focus on how well the solution reflects production-oriented thinking, including:
 
 - automation
-- dependency management
 - operational readiness
 - reproducibility and portability
+- dependency management
 
 
 #### Runable
