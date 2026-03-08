@@ -1,144 +1,81 @@
-# System Engineer Assessment
+# HIAA Geomet Hourly Climate Data Pipeline
 
-## Scenario
-You are tasked with designing a production-ready data pipeline that extracts data from a public API endpoint, applies necessary transformations, and loads the results into a database table. The solution should be suitable for deployment in an operational environment.
+## Overview
+This pipeline pulls hourly climate data for Halifax Stanfield International Airport from the Geomet public API, cleans and shapes it to fit the existing database schema, and loads it into a local SQLite database. It's built to run reliably on a schedule without any manual intervention.
 
-This assessment is conducted through GitHub. Your submission will be through your own private Github repository (see How to Submit below).
+The pipeline is designed to run in a Linux production environment and follows engineering best practices for automation, maintainability, and reproducibility.
 
+## How It Works
+The pipeline follows a simple ETL approach:
+1. **Extract:** 
+    - Find the latest available date, then fetch all 24 hours of data for that date
+    - Filters records for climate station 8202251
 
-### Production Principles
-Our philiosophy of "production" is that systems are expected to operate reliably, predictably, and without manual intervention. This section outlines the foundational principles that guide how we design, deploy, and operate production workloads.
+2. **Transform:**
+    - Selects only the relevant columns that match the `hiaa_geomet_hourly` table schema
+    - Converts API column names to lowercase (to match the database schema)
+    - Converts numeric NULL/NA values to 0
+    - Converts numeric fields to proper data types
+    - Adds an insert_time column with the current UTC timestamp
 
-* automation
-* reproducibility and portability
-* scalable
-* documented
+3. **Load:** Appends the cleaned data into the `hiaa_geomet_hourly` table in the SQLite database
 
+## Requirements
+- Linux OS
+- Python 3.10+
+- Internet Connectivity to access the Geomet API
 
-### Pipeline Principles
-At Halifax Stanfield, production data pipelines are built using a pipeline-as-code approach. Our principles emphasize maintainability, observability, and reliability, treating data workflows as engineered systems rather than adhoc scripts. Additional information and examples are available <a href="https://whipson.github.io/maestro/index.html" target="_blank">here</a>.
+## Setup & Installation
+It is recommended to use a virtual environment to ensure dependency isolation:
 
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
-### Production Environment
-Although **you are not responsible for deploying or orchestrating the pipeline**, your solution must be able to executed on a production-grade server. You can assume the following about the production server.
+## How to Run the Pipeline
+Execute:
+```bash
+python pipeline.py
+```
+*Logs will display progress and status.*
 
-* Operating system is Linux
-* It will have access to the internet
-* Any system libraries or software your solution requires can be installed via standard linux commands provided that these steps are documented and follow our production principles
+## Scheduling in Production
+To run this automatically on a schedule, set up a cron job on your Linux server. For example, to run the pipeline every day at 6am:
+```bash
+crontab -e
+```
 
+Then add this line:
+```bash
+0 6 * * * /path/to/venv/bin/python /path/to/pipeline.py
+```
+*Make sure to replace `/path/to/pipeline.py` with the actual path to your pipeline script.*
 
-### Assessment Instructions
-You are asked to develop a pipeline that will extract data from a public climate API endpoint, transform the incoming data, and load it to an existing SQLite table. You should assume this pipeline would output data into the existing table in a continuous, scheduled manner. 
+## Project Structure
+```text
+project-root/
+├── pipeline.py
+├── requirements.txt
+├── yhz_db.sqlite
+└── README.md
+```
 
-The endpoint you will extract from is the Geomet hourly climate API endpoint: `https://api.weather.gc.ca/collections/climate-hourly/items`
+## Database
+The pipeline loads data into an existing SQLite database:
 
-The Swagger documentation for the entire Geomet API is available <a href="https://api.weather.gc.ca/openapi?f=html" target="_blank">here</a>.
+- Database file: `yhz_db.sqlite`
+- Table: `hiaa_geomet_hourly`
 
-Here are the detailed requirements of your pipeline:
+The table schema is assumed to already exist and match the transformed dataset.
 
-* Extract hourly climate data for the latest available full date and where the CLIMATE_IDENTIFIER is `8202251`
-* Match the incoming data with the schema for the existing `yhz_db.hiaa_geomet_hourly` table
-* Perform a transformation on numeric columns converting NA/NULL values to 0
-* Add a new column called `insert_time` corresponding to the current UTC timestamp (i.e., the time the data is being inserted)
-* Load the transformed data into the existing SQLite table `yhz_db.hiaa_geomet_hourly`.
+## Production Design Principles
 
-
-### Deliverable
-The deliverable is a production-oriented data pipeline that satisfies the scenario and aligns with production principles. The submission should include:
-
-- Code required to extract, transform, and load data from the API into a database table
-- README.md describing the solution and how to run it in production
-- If applicable, configuration and system instructions necessary to execute the solution
-- If applicable, packaging or runtime artifacts required to execute the solution
-
-The solution should be complete enough to evaluate structure, production thinking, and operational readiness, while remaining proportionate to the scope of the assignment.
-
-
-### Assessment Evaluation Rubric
-The following are the independent evaluation criteria for the assessment.
-
-| **Evaluation Area** | **Value** |
-| ------- | :----: |
-| Pipeline code | 50% |
-| Production principles | 30% |
-| Runable | 20% |
-
-
-#### Exclusions from Evaluation
-
-The assessment is designed to evaluate engineering judgment and production-oriented thinking. The following elements will not factor into scoring:
-
-- *Algorithmic efficiency or optimization*  
-Performance tuning is not a focus of this exercise
-- *Code style or elegance*  
-Stylistic preferences or personal conventions will not be evaluated
-- *Perfect execution*  
-A non-executable submission will not automatically result in failure. Clear intent, sound structure, and well-documented reasoning will still be considered
-- *Programming language choice*  
-Any language or framework may be used
-
-
-Candidates are also not expected to invest effort in the following areas unless directly relevant to your design:
-
-- CI/CD pipeline implementation
-- Enterprise-grade security hardening
-- Extensive test suites or performance benchmarking
-- Infrastructure provisioning beyond what is required to demonstrate execution
-- UI development or dashboards
-
-Submissions should remain proportionate to the scope of the scenario. Depth of engineering thinking is valued more than breadth of additional features.
-
-
-#### Pipeline Code
-When reviewing the pipeline code, evaluation will focus on the following:
-
-- clarity of intent
-- pipeline logic
-- structure and organization
-- maintainability
-
-
-#### Production Principles
-Evaluation will focus on how well the solution reflects production-oriented thinking, including:
-
-- automation
-- operational readiness
-- reproducibility and portability
-- dependency management
-
-
-#### Runable
-Evaluation will focus on how easily the solution can be executed in a clean environment, including:
-
-- Low-friction execution
-- Self-contained packaging
-- System instructions
-
-
-## How to Submit
-This assessment is to be completed using GitHub as the primary collaboration and submission mechanism. You must create your own **private** repository containing your solution and the copied `yhz_db.sqlite` file from this repository. 
-
-### Step 1: Create your repo with the copied sqlite database
-
-Either download and copy the `yhz_db.sqlite` file from this repo into your own repository OR import the current repository into your own private repository (see <a href="https://github.com/new/import" target="_blank">here</a>.)
-
-**DO NOT FORK this repository! Forked repositories cannot be made private, meaning your solution will be publicly viewable**
-
-### Step 2: Invite us to your private repo
-
-Access to your repository must be granted to the following GitHub users:
-
-- Will Hipson (`whipson`)
-- Ryan Garnett (`ryangarnett`)
-
-Invite us by going to **Settings > Access > Collaborators**
-
-Any questions related to the assessment should be raised as a GitHub Issue within your repository. Please tag both ryangarnett and whipson to ensure visibility and response.
-
-### Step 3: Create a pull request to the main branch
-
-When you've finished your work create a pull request to your main branch and tag `ryangarnett` as reviewer. It's OK to do the bulk of your development in the main branch - we just want you to use a pull request with a review as the main signal for your work being complete.
-
-You must create the pull request with `ryangarnett` as the reviewer before the assignmment due date as indicated in your invitation email.
-
-***The use of Generative AI is acceptable for this assignment***
+This pipeline was built with production engineering principles in mind:
+- **Automation:** Designed for scheduled, unattended execution
+- **Reproducibility:** Dependencies managed via requirements.txt
+- **Portability:** Runs on standard Linux environments
+- **Maintainability:** Clear ETL structure (Extract → Transform → Load)
+- **Observability:** Logging used to monitor pipeline execution
+- **Reliability:** Error handling prevents silent failures
