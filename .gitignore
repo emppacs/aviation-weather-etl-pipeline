@@ -1,1 +1,13 @@
-create_sqllite_db.R
+# Ignore the database file
+data/*.sqlite
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Pytest cache
+.pytest_cache/
+
+# Environments
+venv/
+.venv/
