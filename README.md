@@ -1,9 +1,9 @@
 # HIAA Geomet Hourly Climate Data Pipeline
 
 ## Overview
-This pipeline pulls hourly climate data for Halifax Stanfield International Airport from the Geomet public API, cleans and shapes it to fit the existing database schema, and loads it into a local SQLite database. It's built to run reliably on a schedule without any manual intervention.
+This production-grade pipeline automates the ingestion of hourly climate data for Halifax Stanfield International Airport (YHZ) from the Environment Canada Geomet API.
 
-The pipeline is designed to run in a Linux production environment and follows engineering best practices for automation, maintainability, and reproducibility.
+Designed for reliability and maintainability, the system extracts, transforms, and loads (ETL) meteorological data into a local SQLite database, following industry best practices for data engineering and Linux-based automation.
 
 ## How It Works
 The pipeline follows a simple ETL approach:
@@ -19,11 +19,15 @@ The pipeline follows a simple ETL approach:
     - Adds an insert_time column with the current UTC timestamp
 
 3. **Load:** Appends the cleaned data into the `hiaa_geomet_hourly` table in the SQLite database
+    - Uses INSERT or IGNORE logic combined with a UNIQUE constraint on the timestamp to prevent duplicate records.
+
+4. **Validation:** Unit tests ensure the pipeline logic is correct and data transformations are accurate
 
 ## Requirements
 - Linux OS
 - Python 3.10+
 - Internet Connectivity to access the Geomet API
+
 
 ## Setup & Installation
 It is recommended to use a virtual environment to ensure dependency isolation:
@@ -34,41 +38,50 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## How to Run the Pipeline
-Execute:
+## How to Run
+1. Run Unit Tests: to ensure everything is working correctly before executing the pipeline
 ```bash
-python pipeline.py
+pytest test/test_pipeline.py
+```
+
+2. Run the Pipeline: to execute the ETL process and load data into the database
+```bash
+python src/pipeline.py
 ```
 *Logs will display progress and status.*
+
 
 ## Scheduling in Production
 To run this automatically on a schedule, set up a cron job on your Linux server. For example, to run the pipeline every day at 6am:
 ```bash
-crontab -e
-```
-
-Then add this line:
-```bash
-0 6 * * * /path/to/venv/bin/python /path/to/pipeline.py
+0 6 * * * /path/to/venv/bin/python /path/to/src/pipeline.py
 ```
 *Make sure to replace `/path/to/pipeline.py` with the actual path to your pipeline script.*
 
+
 ## Project Structure
 ```text
-project-root/
-├── pipeline.py
-├── requirements.txt
-├── yhz_db.sqlite
+aviation-weather-etl-pipeline/
+├── src/
+│   └── pipeline.py         # Main ETL logic
+├── test/
+│   └── test_pipeline.py    # Unit tests (Pytest)
+├── data/
+│   └── yhz_db.sqlite       # Local database storage
+├── requirements.txt        # Project dependencies
+├── .gitignore              # Project exclusions
 └── README.md
 ```
+
 
 ## Database
 The pipeline loads data into an existing SQLite database:
 
-- Database file: `yhz_db.sqlite`
+- Database file: `data/yhz_db.sqlite`
 - Table: `hiaa_geomet_hourly`
 
 The table schema is assumed to already exist and match the transformed dataset.
+
 
 ## Production Design Principles
 
