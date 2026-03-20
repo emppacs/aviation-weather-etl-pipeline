@@ -27,10 +27,10 @@ def test_transform_valid_data():
         ]
     }
 
-    # 2. Run your transform function
+    # 2. Run transform function
     df = transform(mock_api_data)
 
-    # 3. Assertions (The "Proof")
+    # 3. Assertions
     assert isinstance(df, pd.DataFrame)
     assert len(df) == 1
     assert df['temp'].iloc[0] == 5.5  # Check numeric conversion
